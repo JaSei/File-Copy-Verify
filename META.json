@@ -1,10 +1,10 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "data-safe copy",
    "author" : [
       "Jan Seidl <seidl@avast.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v3.0.4, CPAN::Meta::Converter version 2.150001",
+   "generated_by" : "Minilla/v3.0.4, CPAN::Meta::Converter version 2.150005",
    "license" : [
       "perl_5"
    ],
@@ -42,15 +42,32 @@
       },
       "runtime" : {
          "requires" : {
-            "perl" : "5.008001"
+            "Class::Tiny" : "0",
+            "Path::Tiny" : "0.056",
+            "Safe::Isa" : "0",
+            "namespace::autoclean" : "0",
+            "perl" : "5.0010"
          }
       },
       "test" : {
          "requires" : {
+            "Test::Exception" : "0",
             "Test::More" : "0.98"
          }
       }
    },
    "release_status" : "unstable",
-   "version" : "0.01"
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/JaSei/File-Copy-Verify/issues"
+      },
+      "homepage" : "https://github.com/JaSei/File-Copy-Verify",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/JaSei/File-Copy-Verify.git",
+         "web" : "https://github.com/JaSei/File-Copy-Verify"
+      }
+   },
+   "version" : "0.1.0",
+   "x_serialization_backend" : "JSON::PP version 2.27300"
 }

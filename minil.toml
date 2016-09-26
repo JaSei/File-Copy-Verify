@@ -1,4 +1,4 @@
 name = "File-Copy-Verify"
-# badges = ["travis"]
+badges = ["travis"]
 module_maker="ModuleBuildTiny"
 
