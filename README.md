@@ -5,7 +5,7 @@ File::Copy::Verify - data-safe copy
 
 # SYNOPSIS
 
-    use File::Copy::Verify;
+    use File::Copy::Verify qw(verify_copy);
     use Try::Tiny::Retry;
 
     retry {
@@ -43,11 +43,14 @@ File::Copy::Verify - data-safe copy
 
 # DESCRIPTION
 
-File::Copy::Verify is module for verifiing copy. Some storages (in particular a Net storages) can have troubles with valid copy and `copy` function from [File::Copy](https://metacpan.org/pod/File::Copy) don't found this problems (like randoms buffers in copied file).
+This module calculates hash before and after copying and if the hash doesn't match, then dies. I recommend Try::Tiny::Retry module for copy retry mechanism.
+This module is useful for network storages/filesystems, but it is harmful for local storages/filesystems because of overhead. The \`verified\_copy\` function is at least 3 times slower then standard \`copy\`!
 
-This module calculate hash before and after copy and if hash doesn't equal, then die. I recommande [Try::Tiny::Retry](https://metacpan.org/pod/Try::Tiny::Retry) module aka retry copy mechanism.
+File::Copy::Verify is module for verifying copy. Some storages (in particular net storages) can have troubles with valid copy and `copy` function from [File::Copy](https://metacpan.org/pod/File::Copy) doesn't find this problems (like random buffers in copied file).
 
-This module is useffully for networks storages/filesystems, but for local storages/filesystem it is useless. Overhead of this default copy is minimal 3times slower then classic copy!
+This module calculates hash before and after copying and if hash doesn't match, then dies. I recommend [Try::Tiny::Retry](https://metacpan.org/pod/Try::Tiny::Retry) module for copy retry mechanism.
+
+This module is useful for network storages/filesystems, but it is harmful for localstorages/filesystems because of overhead. The `verify_copy`function is at least 3 times slower then standard `copy`!
 
 # METHODS
 

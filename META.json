@@ -69,5 +69,8 @@
       }
    },
    "version" : "0.1.0",
+   "x_contributors" : [
+      "Jan Seidl <janseidl@volny.cz>"
+   ],
    "x_serialization_backend" : "JSON::PP version 2.27300"
 }

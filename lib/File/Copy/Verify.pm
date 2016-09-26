@@ -4,7 +4,7 @@ use warnings;
 
 our $VERSION = '0.1.0';
 
-use Path::Tiny qw(path);
+use Path::Tiny;
 use Safe::Isa;
 use Class::Tiny qw(src dst src_hash dst_hash), {
     hash_algo    => 'MD5',
@@ -20,7 +20,7 @@ File::Copy::Verify - data-safe copy
 
 =head1 SYNOPSIS
 
-    use File::Copy::Verify;
+    use File::Copy::Verify qw(verify_copy);
     use Try::Tiny::Retry;
 
     retry {
@@ -58,11 +58,14 @@ File::Copy::Verify - data-safe copy
 
 =head1 DESCRIPTION
 
-File::Copy::Verify is module for verifiing copy. Some storages (in particular a Net storages) can have troubles with valid copy and C<copy> function from L<File::Copy> don't found this problems (like randoms buffers in copied file).
+This module calculates hash before and after copying and if the hash doesn't match, then dies. I recommend Try::Tiny::Retry module for copy retry mechanism.
+This module is useful for network storages/filesystems, but it is harmful for local storages/filesystems because of overhead. The `verified_copy` function is at least 3 times slower then standard `copy`!
 
-This module calculate hash before and after copy and if hash doesn't equal, then die. I recommande L<Try::Tiny::Retry> module aka retry copy mechanism.
+File::Copy::Verify is module for verifying copy. Some storages (in particular net storages) can have troubles with valid copy and C<copy> function from L<File::Copy> doesn't find this problems (like random buffers in copied file).
 
-This module is useffully for networks storages/filesystems, but for local storages/filesystem it is useless. Overhead of this default copy is minimal 3times slower then classic copy!
+This module calculates hash before and after copying and if hash doesn't match, then dies. I recommend L<Try::Tiny::Retry> module for copy retry mechanism.
+
+This module is useful for network storages/filesystems, but it is harmful for localstorages/filesystems because of overhead. The C<verify_copy>function is at least 3 times slower then standard C<copy>!
 
 =head1 METHODS
 
@@ -112,11 +115,11 @@ sub BUILD {
     my ($self) = @_;
 
     #coerce src and dst to Path::Tiny object
-    if ($self->src->$_isa('Path::Tiny')) {
+    if (!$self->src->$_isa('Path::Tiny')) {
         $self->src(path($self->src));
     }
 
-    if ($self->dst->$_isa('Path::Tiny')) {
+    if (!$self->dst->$_isa('Path::Tiny')) {
         $self->dst(path($self->dst));
     }
 }

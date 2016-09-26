@@ -2,11 +2,21 @@
 use strict;
 use warnings;
 
-use Test::More tests => 5;
-use Path::Tiny qw(path);
+use Test::More tests => 6;
+use Path::Tiny;
 use Test::Exception;
 
 use_ok('File::Copy::Verify');
+
+subtest 'coerce to Path::Tiny' => sub {
+    my $verify_copy = File::Copy::Verify->new(
+        src => 'a',
+        dst => 'b',
+    );
+
+    isa_ok($verify_copy->src, 'Path::Tiny');
+    isa_ok($verify_copy->dst, 'Path::Tiny');
+};
 
 subtest 'file copy to nonexists file' => sub {
     my $workdir = Path::Tiny->tempdir;
