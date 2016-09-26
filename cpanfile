@@ -1,5 +1,5 @@
 requires 'perl', '5.0010';
-requires 'Path::Tiny', '0.056';
+requires 'Path::Tiny', '0.070';
 requires 'Class::Tiny';
 requires 'Safe::Isa';
 requires 'namespace::autoclean';
