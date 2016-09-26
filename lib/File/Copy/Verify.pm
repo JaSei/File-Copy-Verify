@@ -2,7 +2,7 @@ package File::Copy::Verify;
 use strict;
 use warnings;
 
-our $VERSION = '0.1.2';
+our $VERSION = '0.1.3';
 
 use Path::Tiny;
 use Safe::Isa;
@@ -192,7 +192,7 @@ sub move {
 
 =head2 verify_copy($src, $dst, $options)
 
-C<$options> - same parameters (except C<src> and C<dst>) like in constructor L</new-attributes>
+C<$options> - same parameters (except C<src> and C<dst>) like in constructor L</new-attributes|new>
 
 =cut
 
@@ -201,11 +201,11 @@ sub verify_copy;
 
 =head2 copy
 
-alias for L</verify_copy-src-dst-options>
+alias for L<verify_copy>|/verify_copy-src-dst-options>
 
 =head2 cp
 
-alias for L</verify_copy-src-dst-options>
+alias for L<verify_copy>|/verify_copy-src-dst-options>
 
 =cut
 
@@ -214,7 +214,7 @@ sub cp;
 
 =head2 verify_move($src, $dst, $options)
 
-same as L</verify_copy> and after success copy remove source C<$src> file
+same as L<verify_copy>|/verify_copy-src-dst-options> and after success copy remove source C<$src> file
 
 =cut
 
@@ -223,11 +223,11 @@ sub verify_move;
 
 =head2 move
 
-alias for L</verify_move-src-dst-options>
+alias for L<verify_move|/verify_move-src-dst-options>
 
 =head2 mv
 
-alias for L</verify_move-src-dst-options>
+alias for L<verify_move|/verify_move-src-dst-options>
 
 =cut
 
