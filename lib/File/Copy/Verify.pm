@@ -68,26 +68,33 @@ __END__
 
 =head1 NAME
 
-File::Copy::Verify - It's new $module
+File::Copy::Verify - data-safe copy
 
 =head1 SYNOPSIS
 
     use File::Copy::Verify;
+    use Try::Tiny::Retry;
 
-    verify_copy('a', 'b'); #or copy or cp - all variants are exportable
+    retry {
+        verify_copy('a', 'b'); #or copy or cp - all variants are exportable
+    };
 
-    #is ekvivalent of
+    #OOP equovalent:
 
     $verify_copy = File::Copy::Verify->new(
         src => 'a',
         dst => 'b',
     );
-    $verify_copy->copy();
+    retry {
+        $verify_copy->copy();
+    };
 
 
     #I know source SHA-256 hash and I can use for validation
     
-    File::Copy::Verify::copy('a', 'b', {src_hash => '0'x64, hash_algo => 'SHA-256'});
+    retry {
+        File::Copy::Verify::copy('a', 'b', {src_hash => '0'x64, hash_algo => 'SHA-256'});
+    };
     
     $verify_copy = File::Copy::Verify->new(
         src       => 'a',
@@ -95,15 +102,19 @@ File::Copy::Verify - It's new $module
         dst       => 'b',
         hash_algo => 'SHA-256',
     );
-    $verify_copy->copy();
+    retry {
+        $verify_copy->copy();
+    };
 
 
 
 =head1 DESCRIPTION
 
-File::Copy::Verify is module for verifiing copy. Some storages (in particular a Net storages) can have troubles with valid copy and C<copy> function from L<File::Copy> don't found this.
+File::Copy::Verify is module for verifiing copy. Some storages (in particular a Net storages) can have troubles with valid copy and C<copy> function from L<File::Copy> don't found this problems (like randoms buffers in copied file).
 
-This module calculate hash before and after copy and if hash doesn't eqal, then retry mechanism try copy again and again...
+This module calculate hash before and after copy and if hash doesn't eqal, then die. I recommande L<Try::Tiny::Retry> module aka retry copy mechanism.
+
+This module is useffully for networks storages/filesystems, but for local storages/filesystem it is useless. Overhead of this default copy is minimal 3times slower then classic copy!
 
 =head1 FUNCTIONS
 
@@ -129,10 +140,6 @@ alias for L</verify_move>
 
 alias for L</verify_move>
 
-=head2 verify_rcopy
-
-recursive L</verify_copy> 
-
 =head1 METHODS
 
 =head2 new(%attributes)
@@ -153,13 +160,9 @@ recursive L</verify_copy>
 
 =head2 move()
 
-=head2 rcopy()
-
-=head2 rmove()
-
 =head1 SEE ALSO
 
-L<File::Copy::Vigilant> - Looks really good, don't support other digests - only MD5, don't support hard-set src or dst hash. Don't implement rcopy function. 
+L<File::Copy::Vigilant> - Looks really good, don't support other digests - only MD5, don't support hard-set src or dst hash. Support retry mechanism by default.
 
 L<File::Copy::Reliable> - only "checks that the file size of the copied or moved file is the same as the source".
 
