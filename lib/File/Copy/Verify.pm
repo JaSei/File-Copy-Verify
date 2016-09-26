@@ -4,12 +4,109 @@ use warnings;
 
 our $VERSION = '0.1.0';
 
-use File::Copy;
-use Path::Tiny;
+use Path::Tiny qw(path);
 use Safe::Isa;
 use Class::Tiny qw(src dst src_hash dst_hash), {
-    hash_algo => 'MD5',
+    hash_algo    => 'MD5',
+    keep_invalid => 0,
 };
+
+use parent 'Exporter';
+our @EXPORT_OK = qw(verify_copy copy cp verify_move move mv);
+
+=head1 NAME
+
+File::Copy::Verify - data-safe copy
+
+=head1 SYNOPSIS
+
+    use File::Copy::Verify;
+    use Try::Tiny::Retry;
+
+    retry {
+        verify_copy('a', 'b'); #or copy or cp - all variants are exportable
+    };
+
+    #OOP equivalent:
+
+    $verify_copy = File::Copy::Verify->new(
+        src => 'a',
+        dst => 'b',
+    );
+    retry {
+        $verify_copy->copy();
+    };
+
+
+    #I know source SHA-256 hash and I can use for validation
+    
+    retry {
+        File::Copy::Verify::copy('a', 'b', {src_hash => '0'x64, hash_algo => 'SHA-256'});
+    };
+
+    #OOP equivalent
+    
+    $verify_copy = File::Copy::Verify->new(
+        src       => 'a',
+        src_hash  => '0' x 64,
+        dst       => 'b',
+        hash_algo => 'SHA-256',
+    );
+    retry {
+        $verify_copy->copy();
+    };
+
+=head1 DESCRIPTION
+
+File::Copy::Verify is module for verifiing copy. Some storages (in particular a Net storages) can have troubles with valid copy and C<copy> function from L<File::Copy> don't found this problems (like randoms buffers in copied file).
+
+This module calculate hash before and after copy and if hash doesn't equal, then die. I recommande L<Try::Tiny::Retry> module aka retry copy mechanism.
+
+This module is useffully for networks storages/filesystems, but for local storages/filesystem it is useless. Overhead of this default copy is minimal 3times slower then classic copy!
+
+=head1 METHODS
+
+=head2 new(%attributes)
+
+=head3 %attributes
+
+=head4 src
+
+source path
+
+=head4 dst
+
+destination path
+
+=head4 hash_algo
+
+digest alghoritm used for check
+
+default is fast I<MD5>
+
+more about L<Digest>
+
+=head4 src_hash
+
+manualy set source hash
+
+this is usefully if I know source hash (doesn't calculate again)
+
+=head4 dst_hash
+
+manualy set destination hash
+
+this is usefully if I know destination hash (doesn't calculate again)
+
+=head4 keep_invalid
+
+If is file invalid (means hash-check failed), C<dst> is removed.
+
+This decreases potentional problems with bad-copied files.
+
+If you need keep this bad file anyway. Or for debugging. Use this option.
+
+=cut
 
 sub BUILD {
     my ($self) = @_;
@@ -23,6 +120,10 @@ sub BUILD {
         $self->dst(path($self->dst));
     }
 }
+
+=head2 copy()
+
+=cut
 
 sub copy {
     my ($self) = @_;
@@ -52,6 +153,10 @@ sub copy {
     }
 
     if ( uc $self->src_hash ne uc $self->dst_hash ) {
+        if (!$self->keep_invalid) {
+            $dst->remove();
+        }
+
         die sprintf "Src (%s) hash (%s) and dst (%s) hash (%s) isn't equal",
           $self->src,
           $self->src_hash,
@@ -60,65 +165,36 @@ sub copy {
     }
 }
 
+=head2 move()
 
-1;
-__END__
+=cut
+sub move {
+    my ($self) = @_;
 
-=encoding utf-8
+    if (!$self->$_isa(__PACKAGE__)) {
+        my ($src, $dst, $options) = @_;
 
-=head1 NAME
+        return __PACKAGE__->new(
+            src => $src,
+            dst => $dst,
+            %$options
+        )->move();
+    }
 
-File::Copy::Verify - data-safe copy
-
-=head1 SYNOPSIS
-
-    use File::Copy::Verify;
-    use Try::Tiny::Retry;
-
-    retry {
-        verify_copy('a', 'b'); #or copy or cp - all variants are exportable
-    };
-
-    #OOP equovalent:
-
-    $verify_copy = File::Copy::Verify->new(
-        src => 'a',
-        dst => 'b',
-    );
-    retry {
-        $verify_copy->copy();
-    };
-
-
-    #I know source SHA-256 hash and I can use for validation
-    
-    retry {
-        File::Copy::Verify::copy('a', 'b', {src_hash => '0'x64, hash_algo => 'SHA-256'});
-    };
-    
-    $verify_copy = File::Copy::Verify->new(
-        src       => 'a',
-        src_hash  => '0' x 64,
-        dst       => 'b',
-        hash_algo => 'SHA-256',
-    );
-    retry {
-        $verify_copy->copy();
-    };
-
-
-
-=head1 DESCRIPTION
-
-File::Copy::Verify is module for verifiing copy. Some storages (in particular a Net storages) can have troubles with valid copy and C<copy> function from L<File::Copy> don't found this problems (like randoms buffers in copied file).
-
-This module calculate hash before and after copy and if hash doesn't eqal, then die. I recommande L<Try::Tiny::Retry> module aka retry copy mechanism.
-
-This module is useffully for networks storages/filesystems, but for local storages/filesystem it is useless. Overhead of this default copy is minimal 3times slower then classic copy!
+    $self->copy();
+    $self->src->remove();
+}
 
 =head1 FUNCTIONS
 
 =head2 verify_copy($src, $dst, $options)
+
+C<$options> - same parameters (except C<src> and C<dst>) like in constructor L</new>
+
+=cut
+
+sub verify_copy;
+*verify_copy = \&copy;
 
 =head2 copy
 
@@ -128,9 +204,19 @@ alias for L</verify_copy>
 
 alias for L</verify_copy>
 
+=cut
+
+sub cp;
+*cp = \&copy;
+
 =head2 verify_move($src, $dst, $options)
 
-same as L</verify_copy> and after success copy unlink source C<$src> file
+same as L</verify_copy> and after success copy remove source C<$src> file
+
+=cut
+
+sub verify_move;
+*verify_move = \&move;
 
 =head2 move
 
@@ -140,25 +226,10 @@ alias for L</verify_move>
 
 alias for L</verify_move>
 
-=head1 METHODS
+=cut
 
-=head2 new(%attributes)
-
-=head3 %attributes
-
-=head4 src
-
-=head4 dst
-
-=head4 hash_algo
-
-=head4 src_hash
-
-=head4 dst_hash
-
-=head2 copy()
-
-=head2 move()
+sub mv;
+*mv = \&move;
 
 =head1 SEE ALSO
 
@@ -178,3 +249,5 @@ it under the same terms as Perl itself.
 Jan Seidl E<lt>seidl@avast.comE<gt>
 
 =cut
+
+1;

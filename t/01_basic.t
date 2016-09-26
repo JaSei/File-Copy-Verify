@@ -2,8 +2,8 @@
 use strict;
 use warnings;
 
-use Test::More tests => 4;
-use Path::Tiny;
+use Test::More tests => 5;
+use Path::Tiny qw(path);
 use Test::Exception;
 
 use_ok('File::Copy::Verify');
@@ -16,6 +16,8 @@ subtest 'file copy to nonexists file' => sub {
     File::Copy::Verify::copy($src, $dst);
 
     ok($dst->exists, 'copy');
+
+    done_testing(1);
 };
 
 subtest 'file copy to exists file' => sub {
@@ -30,6 +32,8 @@ subtest 'file copy to exists file' => sub {
 
     ok($dst->exists, 'exists after');
     is($dst->slurp, 'new', 'file is rewrited');
+
+    done_testing(4);
 };
 
 subtest 'file copy to dir' => sub {
@@ -39,6 +43,8 @@ subtest 'file copy to dir' => sub {
     File::Copy::Verify::copy($src, "$workdir");
 
     ok(path($workdir,$src->basename)->exists, 'file copied to dir');
+
+    done_testing(1);
 };
 
 subtest 'manualy set hash' => sub {
@@ -57,7 +63,13 @@ subtest 'manualy set hash' => sub {
         File::Copy::Verify::copy($src, $dst, {src_hash => '0', dst_hash => '1'});
     } qr/isn't equal/, "Hashes aren't equal";
 
-    ok(!$dst->exists(), 'src wasn\'t copied');
+    ok(!$dst->exists(), 'src is copied, but invalid is removed');
 
-    done_testing(4);
+    throws_ok {
+        File::Copy::Verify::copy($src, $dst, {src_hash => '0', dst_hash => '1', keep_invalid => 1});
+    } qr/isn't equal/, "Hashes aren't equal";
+
+    ok($dst->exists(), 'src is copied otherwise is invalid is keep on disk');
+
+    done_testing(6);
 };
