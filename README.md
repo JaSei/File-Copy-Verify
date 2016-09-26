@@ -102,15 +102,15 @@ If you need keep this bad file anyway. Or for debugging. Use this option.
 
 ## verify\_copy($src, $dst, $options)
 
-`$options` - same parameters (except `src` and `dst`) like in constructor ["new"](#new)
+`$options` - same parameters (except `src` and `dst`) like in constructor ["new-attributes"](#new-attributes)
 
 ## copy
 
-alias for ["verify\_copy"](#verify_copy)
+alias for ["verify\_copy-src-dst-options"](#verify_copy-src-dst-options)
 
 ## cp
 
-alias for ["verify\_copy"](#verify_copy)
+alias for ["verify\_copy-src-dst-options"](#verify_copy-src-dst-options)
 
 ## verify\_move($src, $dst, $options)
 
@@ -118,11 +118,11 @@ same as ["verify\_copy"](#verify_copy) and after success copy remove source `$sr
 
 ## move
 
-alias for ["verify\_move"](#verify_move)
+alias for ["verify\_move-src-dst-options"](#verify_move-src-dst-options)
 
 ## mv
 
-alias for ["verify\_move"](#verify_move)
+alias for ["verify\_move-src-dst-options"](#verify_move-src-dst-options)
 
 # SEE ALSO
 
