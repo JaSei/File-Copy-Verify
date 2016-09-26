@@ -2,7 +2,7 @@ package File::Copy::Verify;
 use strict;
 use warnings;
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 use Path::Tiny;
 use Safe::Isa;
@@ -242,7 +242,7 @@ L<File::Copy::Reliable> - only "checks that the file size of the copied or moved
 
 =head1 LICENSE
 
-Copyright (C) Jan Seidl.
+Copyright (C) Avast Software.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

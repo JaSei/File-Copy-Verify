@@ -132,7 +132,7 @@ alias for ["verify\_move"](#verify_move)
 
 # LICENSE
 
-Copyright (C) Jan Seidl.
+Copyright (C) Avast Software.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
