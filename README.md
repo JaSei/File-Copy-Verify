@@ -102,19 +102,19 @@ If you need keep this bad file anyway. Or for debugging. Use this option.
 
 ## verify\_copy($src, $dst, $options)
 
-`$options` - same parameters (except `src` and `dst`) like in constructor [/new-attributes](https://metacpan.org/pod/new)
+`$options` - same parameters (except `src` and `dst`) like in constructor [new](#new-attributes)
 
 ## copy
 
-alias for [verify\_copy](https://metacpan.org/pod/verify_copy)|/verify\_copy-src-dst-options>
+alias for [verify\_copy](#verify_copy-src-dst-options)
 
 ## cp
 
-alias for [verify\_copy](https://metacpan.org/pod/verify_copy)|/verify\_copy-src-dst-options>
+alias for [verify\_copy](#verify_copy-src-dst-options)
 
 ## verify\_move($src, $dst, $options)
 
-same as [verify\_copy](https://metacpan.org/pod/verify_copy)|/verify\_copy-src-dst-options> and after success copy remove source `$src` file
+same as [verify\_copy](#verify_copy-src-dst-options) and after success copy remove source `$src` file
 
 ## move
 
@@ -140,11 +140,3 @@ it under the same terms as Perl itself.
 # AUTHOR
 
 Jan Seidl <seidl@avast.com>
-
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 195:
-
-    alternative text '/new-attributes' contains non-escaped | or /
